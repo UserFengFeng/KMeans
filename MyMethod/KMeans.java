@@ -5,6 +5,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * KMeans算法的实现
@@ -43,8 +44,22 @@ public class KMeans {
             e.printStackTrace();
         }
         //初始化KMeans模型，这里选数据集前classNum个点作为初始中心点
+        int pointIndex = 0;
         for (int i = 0; i < cluterNum; i++) {
-            centerPoints.add(points.get(i));
+            Point point = points.get(i);
+            if (i > 0) {
+                while (true) {
+                    pointIndex++;
+                    Point newPoint = points.get(pointIndex);
+                    List<Point> collect = centerPoints.stream().filter(centerPoint -> Double.doubleToLongBits(centerPoint.getX()) == Double.doubleToLongBits(newPoint.getX())).collect(Collectors.toList());
+                    if (collect.isEmpty()) {
+                        centerPoints.add(newPoint);
+                        break;
+                    }
+                }
+            } else {
+                centerPoints.add(point);
+            }
             clusters.put(i, new ArrayList<>());
         }
     }
